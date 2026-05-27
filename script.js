@@ -7,7 +7,16 @@ const lists = {
   done: document.querySelector("#doneList"),
 };
 
+const counters = {
+  total: document.querySelector("#totalCount"),
+  done: document.querySelector("#doneCount"),
+  todoColumn: document.querySelector("#todoCount"),
+  progressColumn: document.querySelector("#progressCount"),
+  doneColumn: document.querySelector("#doneColumnCount"),
+};
+
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let draggedTaskId = null;
 
 taskForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -18,30 +27,30 @@ taskForm.addEventListener("submit", (event) => {
     return;
   }
 
-  const task = {
+  tasks.push({
     id: Date.now(),
     text,
     status: "todo",
-  };
+  });
 
-  tasks.push(task);
   taskInput.value = "";
-
   saveTasks();
   renderTasks();
 });
 
 function renderTasks() {
-  lists.todo.innerHTML = "";
-  lists.progress.innerHTML = "";
-  lists.done.innerHTML = "";
+  Object.values(lists).forEach((list) => {
+    list.innerHTML = "";
+  });
 
   tasks.forEach((task) => {
     const taskElement = document.createElement("article");
     taskElement.className = "task";
+    taskElement.draggable = true;
+    taskElement.dataset.id = task.id;
 
     taskElement.innerHTML = `
-      <p>${task.text}</p>
+      <p>${escapeHtml(task.text)}</p>
       <div class="task-actions">
         ${getTaskButtons(task)}
         <button class="danger" data-action="delete" data-id="${task.id}">Удалить</button>
@@ -50,6 +59,8 @@ function renderTasks() {
 
     lists[task.status].appendChild(taskElement);
   });
+
+  updateCounters();
 }
 
 function getTaskButtons(task) {
@@ -80,19 +91,99 @@ document.addEventListener("click", (event) => {
   if (action === "delete") {
     tasks = tasks.filter((task) => task.id !== id);
   } else {
-    const task = tasks.find((task) => task.id === id);
-
-    if (task) {
-      task.status = action;
-    }
+    updateTaskStatus(id, action);
   }
 
   saveTasks();
   renderTasks();
 });
 
+document.addEventListener("dragstart", (event) => {
+  const taskElement = event.target.closest(".task");
+
+  if (!taskElement) {
+    return;
+  }
+
+  draggedTaskId = Number(taskElement.dataset.id);
+  taskElement.classList.add("dragging");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", String(draggedTaskId));
+});
+
+document.addEventListener("dragend", (event) => {
+  const taskElement = event.target.closest(".task");
+
+  if (taskElement) {
+    taskElement.classList.remove("dragging");
+  }
+
+  draggedTaskId = null;
+  document.querySelectorAll(".column").forEach((column) => {
+    column.classList.remove("drag-over");
+  });
+});
+
+document.querySelectorAll(".column").forEach((column) => {
+  column.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    column.classList.add("drag-over");
+  });
+
+  column.addEventListener("dragleave", (event) => {
+    if (!column.contains(event.relatedTarget)) {
+      column.classList.remove("drag-over");
+    }
+  });
+
+  column.addEventListener("drop", (event) => {
+    event.preventDefault();
+    column.classList.remove("drag-over");
+
+    const id = draggedTaskId || Number(event.dataTransfer.getData("text/plain"));
+    const status = column.dataset.status;
+
+    if (!id || !status) {
+      return;
+    }
+
+    updateTaskStatus(id, status);
+    saveTasks();
+    renderTasks();
+  });
+});
+
+function updateTaskStatus(id, status) {
+  const task = tasks.find((currentTask) => currentTask.id === id);
+
+  if (task) {
+    task.status = status;
+  }
+}
+
+function updateCounters() {
+  const todoCount = tasks.filter((task) => task.status === "todo").length;
+  const progressCount = tasks.filter((task) => task.status === "progress").length;
+  const doneCount = tasks.filter((task) => task.status === "done").length;
+
+  counters.total.textContent = tasks.length;
+  counters.done.textContent = doneCount;
+  counters.todoColumn.textContent = todoCount;
+  counters.progressColumn.textContent = progressCount;
+  counters.doneColumn.textContent = doneCount;
+}
+
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 renderTasks();

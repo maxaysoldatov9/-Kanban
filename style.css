@@ -2,92 +2,247 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg: #10131a;
+  --panel: rgba(255, 255, 255, 0.08);
+  --panel-strong: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.14);
+  --text: #f8fafc;
+  --muted: #aab3c5;
+  --blue: #3b82f6;
+  --cyan: #22d3ee;
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
 body {
+  min-height: 100vh;
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  color: #1f2937;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(34, 211, 238, 0.18), transparent 32%),
+    radial-gradient(circle at 90% 10%, rgba(245, 158, 11, 0.14), transparent 30%),
+    linear-gradient(135deg, #0f172a 0%, #111827 48%, #171717 100%);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
 }
 
 .app {
-  width: min(1100px, 100%);
+  width: min(1180px, 100%);
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: 40px 20px;
 }
 
 .header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .header h1 {
-  margin: 0 0 8px;
-  font-size: 36px;
+  margin: 0 0 10px;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1;
 }
 
 .header p {
+  max-width: 620px;
   margin: 0;
-  color: #6b7280;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.stats span {
+  min-width: 105px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stats strong {
+  display: block;
+  color: var(--text);
+  font-size: 24px;
 }
 
 .task-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
 }
 
 .task-form input {
-  flex: 1;
-  padding: 12px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 16px;
+  min-width: 0;
+  border: 0;
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: rgba(15, 23, 42, 0.72);
+  color: var(--text);
+  outline: none;
+}
+
+.task-form input::placeholder {
+  color: #7f8ba3;
+}
+
+.task-form input:focus {
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.42);
 }
 
 .task-form button,
 .task button {
-  border: none;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  background: #2563eb;
+  border: 0;
+  border-radius: 6px;
+  padding: 12px 15px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
   color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
+}
+
+.task-form button:hover,
+.task button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(34, 211, 238, 0.18);
 }
 
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+  align-items: start;
 }
 
 .column {
-  background: white;
-  border: 1px solid #e5e7eb;
+  min-height: 520px;
+  padding: 14px;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 16px;
-  min-height: 400px;
+  background: rgba(255, 255, 255, 0.075);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.column.drag-over {
+  border-color: rgba(34, 211, 238, 0.9);
+  background: rgba(34, 211, 238, 0.11);
+  transform: translateY(-2px);
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .column h2 {
-  margin: 0 0 16px;
-  font-size: 20px;
+  margin: 0;
+  font-size: 18px;
+}
+
+.column-header span {
+  min-width: 34px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--muted);
+  font-weight: 800;
+  text-align: center;
+}
+
+.column-todo h2 {
+  color: #93c5fd;
+}
+
+.column-progress h2 {
+  color: #fbbf24;
+}
+
+.column-done h2 {
+  color: #86efac;
 }
 
 .task-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 430px;
+}
+
+.task-list:empty::after {
+  content: "Перетащи задачу сюда";
+  display: grid;
+  min-height: 100px;
+  place-items: center;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #7f8ba3;
+  font-size: 14px;
 }
 
 .task {
-  padding: 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+  cursor: grab;
+  transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease;
+}
+
+.task:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.36);
+}
+
+.task.dragging {
+  opacity: 0.45;
+  transform: rotate(1deg) scale(0.98);
 }
 
 .task p {
   margin: 0 0 12px;
+  color: #eef2ff;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 .task-actions {
@@ -96,24 +251,52 @@ body {
   flex-wrap: wrap;
 }
 
+.task button {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
 .task .secondary {
-  background: #6b7280;
+  background: rgba(148, 163, 184, 0.22);
 }
 
 .task .success {
-  background: #16a34a;
+  background: linear-gradient(135deg, #16a34a, var(--green));
 }
 
 .task .danger {
-  background: #dc2626;
+  background: linear-gradient(135deg, #dc2626, var(--red));
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .stats {
+    justify-content: flex-start;
+  }
+
   .board {
     grid-template-columns: 1fr;
   }
 
+  .column {
+    min-height: 320px;
+  }
+
+  .task-list {
+    min-height: 230px;
+  }
+}
+
+@media (max-width: 560px) {
+  .app {
+    padding: 28px 14px;
+  }
+
   .task-form {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }

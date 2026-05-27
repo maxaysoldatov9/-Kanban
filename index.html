@@ -9,35 +9,50 @@
 <body>
   <main class="app">
     <header class="header">
-      <h1>Kanban доска</h1>
-      <p>Управляй задачами: создай, возьми в работу и отметь готовыми.</p>
-      <strong>Разработал MaXaY </strong>
+      <div>
+        <p class="eyebrow">MaXaY workspace</p>
+        <h1>Kanban доска</h1>
+        <p>Создавай задачи, бери их в работу и перетаскивай между этапами.</p>
+      </div>
+      <div class="stats" aria-label="Статистика задач">
+        <span><strong id="totalCount">0</strong> всего</span>
+        <span><strong id="doneCount">0</strong> готово</span>
+      </div>
     </header>
 
     <form class="task-form" id="taskForm">
       <input
         type="text"
         id="taskInput"
-        placeholder="Например: сверстать карточку задачи"
+        placeholder="Например: добавить drag-and-drop"
         autocomplete="off"
       />
       <button type="submit">Добавить</button>
     </form>
 
-    <section class="board">
-      <div class="column">
-        <h2>Нужно сделать</h2>
-        <div class="task-list" id="todoList"></div>
+    <section class="board" aria-label="Доска задач">
+      <div class="column column-todo" data-status="todo">
+        <div class="column-header">
+          <h2>Нужно сделать</h2>
+          <span id="todoCount">0</span>
+        </div>
+        <div class="task-list" id="todoList" data-status="todo"></div>
       </div>
 
-      <div class="column">
-        <h2>В работе</h2>
-        <div class="task-list" id="progressList"></div>
+      <div class="column column-progress" data-status="progress">
+        <div class="column-header">
+          <h2>В работе</h2>
+          <span id="progressCount">0</span>
+        </div>
+        <div class="task-list" id="progressList" data-status="progress"></div>
       </div>
 
-      <div class="column">
-        <h2>Готово</h2>
-        <div class="task-list" id="doneList"></div>
+      <div class="column column-done" data-status="done">
+        <div class="column-header">
+          <h2>Готово</h2>
+          <span id="doneColumnCount">0</span>
+        </div>
+        <div class="task-list" id="doneList" data-status="done"></div>
       </div>
     </section>
   </main>
