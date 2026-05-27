@@ -1,13 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Kanban</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kanban доска</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    
-    <script src="script.js"></script>
+  <main class="app">
+    <header class="header">
+      <h1>Kanban доска</h1>
+      <p>Управляй задачами: создай, возьми в работу и отметь готовыми.</p>
+      <strong>Разработал MaXaY </strong>
+    </header>
+
+    <form class="task-form" id="taskForm">
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="Например: сверстать карточку задачи"
+        autocomplete="off"
+      />
+      <button type="submit">Добавить</button>
+    </form>
+
+    <section class="board">
+      <div class="column">
+        <h2>Нужно сделать</h2>
+        <div class="task-list" id="todoList"></div>
+      </div>
+
+      <div class="column">
+        <h2>В работе</h2>
+        <div class="task-list" id="progressList"></div>
+      </div>
+
+      <div class="column">
+        <h2>Готово</h2>
+        <div class="task-list" id="doneList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
